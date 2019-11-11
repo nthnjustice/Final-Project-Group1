@@ -1,4 +1,4 @@
 Code/.idea
-Code/data
+Code/data/*
 
 !Code/data/sources.txt
