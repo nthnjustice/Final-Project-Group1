@@ -1,12 +1,24 @@
+import os
 import urllib
 import zipfile
 
+root = 'data/shapefiles'
 
-res = urllib.request.urlopen('ftp://ftp.geoinfo.msl.mt.gov/Data/Spatial/MSDI/AdministrativeBoundaries/MontanaReservations_shp.zip').read()
+os.makedirs(root, exist_ok=True)
 
-with open('data/MontanaReservations.zip', 'wb') as file:
-    file.write(res)
+lines = [line.rstrip('\n') for line in open('sources.txt')]
 
-zip = zipfile.ZipFile('data/MontanaReservations.zip')
-zip.extractall('data/MontanaReservations')
-zip.close()
+i = 0
+while i < len(lines):
+    name = lines[i]
+    url = lines[i + 1]
+
+    res = urllib.request.urlopen(url).read()
+    path = root + '/' + name
+
+    with open(path + '.zip', 'wb') as file:
+        file.write(res)
+
+    zipfile.ZipFile(path + '.zip').extractall(path)
+
+    i += 2

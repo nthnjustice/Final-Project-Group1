@@ -1,4 +1,4 @@
+Docs/
+GIS/
 Code/.idea
-Code/data/*
-
-!Code/data/sources.txt
+Code/data
