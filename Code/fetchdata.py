@@ -3,7 +3,6 @@ import urllib
 import zipfile
 
 root = 'data/shapefiles'
-
 os.makedirs(root, exist_ok=True)
 
 lines = [line.rstrip('\n') for line in open('sources.txt')]
@@ -20,5 +19,4 @@ while i < len(lines):
         file.write(res)
 
     zipfile.ZipFile(path + '.zip').extractall(path)
-
     i += 2
