@@ -1,4 +1,5 @@
 Docs/
 GIS/
 Code/.idea
+Code/__pycache__
 Code/data
