@@ -28,8 +28,8 @@ def run():
     dirs.append('OTHR')
 
     move_images('train/', dirs, xtrain, ytrain)
-    move_images('test/', dirs)
-    move_images('valid/', dirs)
+    move_images('test/', dirs, xtest, ytest)
+    move_images('valid/', dirs, xvalid, yvalid)
 
 
 def move_images(path, dirs, x, y):
