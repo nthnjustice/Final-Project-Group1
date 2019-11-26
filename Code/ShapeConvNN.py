@@ -14,8 +14,8 @@ path_dir_train = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/trai
 path_dir_validate = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/valid'
 path_dir_test = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/test'
 
-img_width = 100
-img_height = 100
+img_width = 28
+img_height = 28
 epochs = 60
 
 generator = ImageDataGenerator(rescale=1./255)
@@ -39,31 +39,31 @@ validation_generator = generator.flow_from_directory(
 
 # #define model
 model = Sequential()
-model.add(Convolution2D(32, 4, 4, input_shape=(img_width, img_height, 1)))
+model.add(Convolution2D(16, 3, 3, input_shape=(img_width, img_height, 1)))
 model.add(Activation('relu'))
-model.add(Dropout(0.2))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+# model.add(Dropout(0.2))
+model.add(MaxPooling2D(pool_size=(10, 10)))
 
-model.add(Convolution2D(32, 3, 3))
+model.add(Convolution2D(32, 2, 2))
 model.add(Activation('relu'))
-model.add(Dropout(0.2))
-model.add(MaxPooling2D(pool_size=(2, 2)))
+# model.add(Dropout(0.2))
+# model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Convolution2D(32, 3, 3))
-model.add(Activation('relu'))
+# model.add(Convolution2D(32, 2, 2))
+# model.add(Activation('relu'))
+# model.add(MaxPooling2D(pool_size=(2, 2)))
 
 
-
-# model.add(Convolution2D(32, 3, 3))
+# model.add(Convolution2D(32, 2, 2))
 # model.add(Activation('relu'))
 # model.add(Dropout(0.2))
 # model.add(MaxPooling2D(pool_size=(2, 2)))
 
 model.add(Flatten())
-model.add(Dense(512))
-model.add(Dense(256))
+# model.add(Dense(56))
+model.add(Dense(56))
 model.add(Activation('relu'))
-model.add(Dropout(0.1))
+# model.add(Dropout(0.1))
 
 model.add(Dense(8))
 model.add(Activation('softmax'))
@@ -83,8 +83,8 @@ history = model.fit_generator(
 )
 
 # Plot training & validation accuracy values
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
 plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
