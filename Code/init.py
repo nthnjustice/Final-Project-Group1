@@ -18,28 +18,37 @@ from sklearn.model_selection import train_test_split
 #   1) initializing folder architecture
 #   2) loading remote data
 #   3) converting shapefile polygons to images
-#   4) generating train/test/validation data splits
+#   4) generating train/validation/test data splits
 ########################################################################################################################
 
 class Dataset:
-    def __init__(self, shapefile, target, dimension, padding, min_count, test_size, valid_size):
+    def __init__(self, shapefile, target, dimension, padding, min_count, valid_size, test_size):
+        # initialize list of data-related directories
         self.dirs = ['data', 'images', 'shapefiles', 'test', 'train', 'valid', 'models']
+        # initialize file name storing data source names and locations
         self.sources = 'sources.txt'
+        # initialize storage for GeoDataFrame object
         self.df = None
 
+        # assign path to shapefile of interest
         self.shapefile = shapefile
+        # assign name of feature to use for class labels
         self.target = target
+        # assign desired dimension of output images minus padding size
         self.dimension = dimension
+        # assign padding size for images
         self.padding = padding
+        # assign minimum count of observations for valid class label
         self.min_count = min_count
-        self.test_size = test_size
+        # assign validation/test split sizes
         self.valid_size = valid_size
+        self.test_size = test_size
 
     def run(self):
         self.init_directories()
         self.fetch_data()
         self.set_df()
-        self.shp2png()
+        self.convert_shp()
         self.split_data()
 
     def init_directories(self):
@@ -64,7 +73,7 @@ class Dataset:
     def set_df(self):
         self.df = gpd.read_file(self.shapefile)
 
-    def shp2png(self):
+    def convert_shp(self):
         new_dimension = self.dimension + self.padding
 
         for label in self.df[self.target].unique():
@@ -132,7 +141,9 @@ class Dataset:
         xtrain, xvalid, ytrain, yvalid = train_test_split(xtrain, ytrain, test_size=self.valid_size, random_state=0)
 
         dirs = [i for i in dirs if i not in others]
-        dirs.append('OTHR')
+
+        if len(others) > 0:
+            dirs.append('OTHR')
 
         self.move_images('train/', dirs, xtrain, ytrain)
         self.move_images('test/', dirs, xtest, ytest)
