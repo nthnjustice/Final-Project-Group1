@@ -14,8 +14,8 @@ path_dir_train = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/trai
 path_dir_validate = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/valid'
 path_dir_test = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/test'
 
-img_width = 28
-img_height = 28
+img_width = 200
+img_height = 200
 epochs = 60
 
 generator = ImageDataGenerator(rescale=1./255)
@@ -41,13 +41,13 @@ validation_generator = generator.flow_from_directory(
 model = Sequential()
 model.add(Convolution2D(16, 3, 3, input_shape=(img_width, img_height, 1)))
 model.add(Activation('relu'))
-# model.add(Dropout(0.2))
+model.add(Dropout(0.5))
 model.add(MaxPooling2D(pool_size=(10, 10)))
 
 model.add(Convolution2D(32, 2, 2))
 model.add(Activation('relu'))
-# model.add(Dropout(0.2))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.2))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
 # model.add(Convolution2D(32, 2, 2))
 # model.add(Activation('relu'))
