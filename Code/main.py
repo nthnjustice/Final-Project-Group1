@@ -1,13 +1,11 @@
 import init
 
-# SHAPEFILE = 'data/shapefiles/MTPublicLands_SHP/MTPublicLands_SHP.shp'
-# TARGET = 'OWNER'
-SHAPEFILE = 'data/shapefiles/PADUS2_0_Shapefiles/PADUS2_0Fee.shp'
-TARGET = 'Own_Type'
+SHAPEFILE = 'data/shapefiles/CONUS/Species_CONUS_Range_2001v1.shp'
+TARGET = 'Taxa'
 
 DIMENSION = 240
 PADDING = 10
-MIN_COUNT = 500
+MIN_COUNT = 1
 TEST_SIZE = 0.2
 VALID_SIZE = 0.2
 

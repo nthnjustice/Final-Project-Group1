@@ -1,3 +1,7 @@
+########################################################################################################################
+# LOAD DEPENDENCIES
+########################################################################################################################
+
 import os
 import shutil
 import urllib
@@ -8,9 +12,18 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
+########################################################################################################################
+# DATASET OBJECT
+# description: prepares project by:
+#   1) initializing folder architecture
+#   2) loading remote data
+#   3) converting shapefile polygons to images
+#   4) generating train/test/validation data splits
+########################################################################################################################
+
 class Dataset:
     def __init__(self, shapefile, target, dimension, padding, min_count, test_size, valid_size):
-        self.dirs = ['data', 'images', 'shapefiles', 'test', 'train', 'valid']
+        self.dirs = ['data', 'images', 'shapefiles', 'test', 'train', 'valid', 'models']
         self.sources = 'sources.txt'
         self.df = None
 
