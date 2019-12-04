@@ -2,7 +2,7 @@
 # LOAD DEPENDENCIES
 ########################################################################################################################
 
-from init import Dataset
+from dataset import Dataset
 
 ########################################################################################################################
 # PROJECT PREPARATION
@@ -36,10 +36,6 @@ params = {
 }
 
 # run project preparations
-dataset = init.Dataset(params)
-# dataset.run()
-# dataset.init_directories()
-# dataset.fetch_data()
-# dataset.set_df()
-# dataset.convert_shp()
-dataset.split_data()
+dataset = Dataset(params)
+dataset.run()
+

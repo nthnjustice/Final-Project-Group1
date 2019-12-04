@@ -170,6 +170,13 @@ class Dataset:
         xtrain, xvalid, ytrain, yvalid = train_test_split(x, y, test_size=vsize, random_state=0)
         xtrain, xtest, ytrain, ytest = train_test_split(xtrain, ytrain, test_size=tsize, random_state=0)
 
+        # oversample training set
+        if self.params['oversample']:
+            ros = RandomOverSampler(random_state=0)
+            xtrain = xtrain.reshape(-1, 1)
+            xtrain, ytrain = ros.fit_resample(xtrain, ytrain)
+            xtrain = xtrain.reshape(-1)
+
         # rebuild list of class labels
         dirs = [i for i in dirs if i not in others]
         if len(others) > 0:
@@ -177,8 +184,8 @@ class Dataset:
 
         # move image splits to their appropriate destination
         self.move_images('train/', dirs, xtrain, ytrain)
-        self.move_images('test/', dirs, xtest, ytest)
         self.move_images('validation/', dirs, xvalid, yvalid)
+        self.move_images('test/', dirs, xtest, ytest)
 
     # purpose: move images from one directory to another
     # inputs:
@@ -194,7 +201,16 @@ class Dataset:
         for i in range(len(x)):
             source = 'data/images/' + x[i].split('_')[0] + '/' + x[i]
             destination = 'data/' + path + y[i] + '/' + x[i]
-            shutil.copyfile(source, destination)
+            # https://stackoverflow.com/questions/33282647/python-shutil-copy-if-i-have-a-duplicate-file-will-it-copy-to-new-location
+            if not os.path.exists(destination):
+                shutil.copyfile(source, destination)
+            else:
+                base, extension = os.path.splitext(x[i])
+                count = 1
+                while os.path.exists(destination):
+                    destination = 'data/' + path + y[i] + '/' + base + '_' + str(count) + extension
+                    count += 1
+                shutil.copyfile(source, destination)
 
     # purpose: initialize new directory
     # input: name of directory to be created
@@ -212,36 +228,3 @@ class Dataset:
                 os.unlink(os.path.join(root, f))
             for d in dirs:
                 shutil.rmtree(os.path.join(root, d))
-
-
-# root = 'data/images/'
-# dirs = os.listdir(root)
-#
-# x = []
-# y = []
-#
-# for label in dirs:
-#     images = os.listdir(root + label)
-#
-#     for i in images:
-#         image = Image.open(root + label + '/' + i)
-#         image = np.asarray(image)
-#
-#         x.append(image)
-#         y.append(label)
-#
-# x = np.array(x)
-# x = x.reshape(len(x), -1)
-# y = np.array(y)
-#
-# ros = RandomOverSampler(random_state=0)
-# x1 = x.reshape(-1, 1)
-# x2, y2 = ros.fit_resample(x1, y1)
-
-# x = x.reshape(len(y), 250, 250)
-#
-# count = 0
-# for label in y:
-#
-#
-# new_img.save(root + label + '/' + label + '_' + str(count) + '.png')
