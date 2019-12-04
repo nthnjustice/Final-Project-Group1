@@ -1,2 +1,2 @@
 CONUS
-https://prod-is-s3-service.s3.amazonaws.com/ScienceBase/prod/5b873238e4b0702d0e796688/812c539d11e23363d25a852f3c3cd31e7293fcc7/Species_CONUS_Range_2001v1.zip?AWSAccessKeyId=AKIAI7K4IX6D4QLARINA&Expires=1575335246&Signature=pT836MQhOlTYox27EwzN5%2BdcUuI%3D
+https://prod-is-s3-service.s3.amazonaws.com/ScienceBase/prod/5b873238e4b0702d0e796688/812c539d11e23363d25a852f3c3cd31e7293fcc7/Species_CONUS_Range_2001v1.zip?AWSAccessKeyId=AKIAI7K4IX6D4QLARINA&Expires=1575511215&Signature=UBvUT1sLmALXdoU883rxEu6pGqE%3D

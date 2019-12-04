@@ -10,41 +10,27 @@ import geopandas as gpd
 from PIL import Image, ImageDraw
 import numpy as np
 from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import RandomOverSampler
 
 
 ########################################################################################################################
 # DATASET OBJECT
-# description: prepares project by:
-#   1) initializing folder architecture
-#   2) loading remote data
-#   3) converting shapefile polygons to images
-#   4) generating train/validation/test data splits
+# description: prepares the project via:
+#   1) initialize folder architecture
+#   2) load remote data
+#   3) convert shapefile polygons to images
+#   4) generate train/validation/test data splits
+#   5) preprocess train split
 ########################################################################################################################
 
 class Dataset:
-    def __init__(self, shapefile, target, dimension, padding, min_count, valid_size, test_size):
-        # initialize list of data-related directories
-        self.dirs = ['data', 'images', 'shapefiles', 'test', 'train', 'valid', 'models']
-        # initialize file name storing data source names and locations
-        self.sources = 'sources.txt'
+    def __init__(self, params):
+        # assign parameter values
+        self.params = params
         # initialize storage for GeoDataFrame object
         self.df = None
 
-        # assign path to shapefile of interest
-        self.shapefile = shapefile
-        # assign name of feature to use for class labels
-        self.target = target
-        # assign desired dimension of output images minus padding size
-        self.dimension = dimension
-        # assign padding size for images
-        self.padding = padding
-        # assign minimum count of observations for valid class label
-        self.min_count = min_count
-        # assign validation/test split sizes
-        self.valid_size = valid_size
-        self.test_size = test_size
-
-    # purpose: call all methods necessary to prepare project
+    # purpose: call all methods necessary to prepare the project
     def run(self):
         self.init_directories()
         self.fetch_data()
@@ -54,97 +40,99 @@ class Dataset:
 
     # purpose: initialize data-related directories
     def init_directories(self):
-        [self.init_directory(i) for i in self.dirs]
+        [self.init_directory(i) for i in self.params['data_dirs']]
 
-    # purpose: fetch and unzip shapefiles from remote sources
+    # purpose: fetch and unzip data from remote sources
     def fetch_data(self):
-        # read data source name and location pairs
-        lines = [line.rstrip('\n') for line in open(self.sources)]
+        # read data-source name and location pairs
+        lines = [line.rstrip('\n') for line in open(self.params['sources'])]
+        # initialize line iterator
         i = 0
+        # loop through name and location pairs
         while i < len(lines):
-            # separate and store data source name and location
+            # separate and store name and location in focus
             name = lines[i]
             url = lines[i + 1]
 
-            # fetch data from remote location
+            # GET data from remote location
             res = urllib.request.urlopen(url).read()
-            # declare destination path
+            # build path to destination folder
             path = 'data/shapefiles/' + name
 
-            # save zipped response from remote location
+            # save and unzip response from remote location
             with open(path + '.zip', 'wb') as file:
                 file.write(res)
-
-            # unzip saved data
             zipfile.ZipFile(path + '.zip').extractall(path)
-            # increment through name and location pairs
+
+            # increment to next name and location pair
             i += 2
 
-    # purpose: read and assign shapefile of interest
+    # purpose: load shapefile of interest
     def set_df(self):
-        self.df = gpd.read_file(self.shapefile)
+        self.df = gpd.read_file(self.params['shapefile'])
 
-    # purpose: convert spatial polygons to .png images
+    # purpose: convert shapefile polygons to .png images
     def convert_shp(self):
-        # assign final dimension of output images
-        new_dimension = self.dimension + self.padding
+        # calculate final dimension of output images
+        new_dimension = self.params['dimension'] + self.params['padding']
 
-        # loop through class labels of interest
-        for label in self.df[self.target].unique():
-            # initialize output directory
+        # loop through class labels
+        for label in self.df[self.params['target']].unique():
+            # initialize output directory for label in focus
             self.init_directory('images/' + label)
 
             # subset observations of class label in focus
-            layer = self.df[self.df[self.target] == label]
-            # decompose GeoDataFrame into GeoJSON object
+            layer = self.df[self.df[self.params['target']] == label]
+            # convert GeoDataFrame into GeoJSON object
             geo = layer.__geo_interface__
 
             # initialize iterator for output image suffix
             count = 0
-            # loop through object features
+            # loop through features
             for feature in geo['features']:
-                # capture properties of feature in focus
+                # store relevant information about the feature in focus
                 ftype = feature['geometry']['type']
                 polygons = feature['geometry']['coordinates']
                 bbox = feature['bbox']
 
-                # calculate dimension ratios to be used for sizing output images
+                # calculate dimension ratios to be used for sizing output image
                 # https://gist.github.com/ianfieldhouse/2284557
                 xdist = bbox[2] - bbox[0]
                 ydist = bbox[3] - bbox[1]
                 xratio = new_dimension / xdist
                 yratio = new_dimension / ydist
 
-                # initialize components for creating a new image
-                img = Image.new(mode='1', size=(self.dimension, self.dimension), color='#ffffff')
+                # initialize objects for creating a new output image
+                size = (self.params['dimension'], self.params['dimension'])
+                img = Image.new(mode=self.params['mode'], size=size, color='#ffffff')
                 draw = ImageDraw.Draw(img)
                 pixels = []
 
+                # generate scaled image representation of feature polygon(s) in focus
+                # https://gist.github.com/ianfieldhouse/2284557
                 if ftype == 'Polygon':
-                    # generate image representation of feature polygon in focus
-                    # https://gist.github.com/ianfieldhouse/2284557
                     for coords in polygons[0]:
-                        px = int(self.dimension - (bbox[2] - coords[0]) * xratio)
+                        px = int(self.params['dimension'] - (bbox[2] - coords[0]) * xratio)
                         py = int((bbox[3] - coords[1]) * yratio)
                         pixels.append((px, py))
-                    draw.polygon(pixels, outline='#000000', fill='#000000')
+                    draw.polygon(pixels, outline='#000000', fill=self.params['fill'])
                 elif ftype == 'MultiPolygon':
-                    # generate image representation of feature polygons in focus
-                    # https://gist.github.com/ianfieldhouse/2284557
                     for polygon in polygons:
                         for coords in polygon[0]:
-                            px = int(self.dimension - (bbox[2] - coords[0]) * xratio)
+                            px = int(self.params['dimension'] - (bbox[2] - coords[0]) * xratio)
                             py = int((bbox[3] - coords[1]) * yratio)
                             pixels.append((px, py))
-                        draw.polygon(pixels, outline='#000000', fill='#000000')
+                        draw.polygon(pixels, outline='#000000', fill=self.params['fill'])
                         pixels = []
 
-                # apply padding to image of feature polygon(s) in focus
+                # apply padding to newly drawn image
                 # https://jdhao.github.io/2017/11/06/resize-image-to-square-with-padding/
                 new_img = Image.new(mode='1', size=(new_dimension, new_dimension), color='#ffffff')
-                new_img.paste(img, ((new_dimension - self.dimension) // 2, (new_dimension - self.dimension) // 2))
+                inner_x = (new_dimension - self.params['dimension']) // 2
+                inner_y = (new_dimension - self.params['dimension']) // 2
+                new_img.paste(img, (inner_x, inner_y))
 
-                # save new image
+                # save newly drawn image
                 new_img.save('data/images/' + label + '/' + label + '_' + str(count) + '.png')
                 # increment output image suffix
                 count += 1
@@ -152,22 +140,22 @@ class Dataset:
     # purpose: split image data into train/validation/test sets
     def split_data(self):
         root = 'data/images/'
-        # initialize output directory
+        # assign list of class labels
         dirs = os.listdir(root)
-        # create list of class labels lacking minimum number of observations
-        others = [name for name in dirs if len(os.listdir(root + name)) < self.min_count]
+        # create list of class labels lacking minimum number of observations to be usable
+        others = [name for name in dirs if len(os.listdir(root + name)) < self.params['min_class_count']]
 
-        # initialize storage for input and target label data
+        # initialize parallel storage for input and target label data
         x = []
         y = []
 
-        # loop through output directories for class labels
+        # loop through class labels
         for i in dirs:
             images = os.listdir(root + i)
-            # use 'OTHR' label if class label in focus lacks minimum number of observations
+            # use 'OTHR' label if class label in focus lacks minimum number of observations to be usable
             label = 'OTHR' if i in others else i
 
-            # populate input and target storage
+            # populate input and target label storage
             for image in images:
                 x.append(image)
                 y.append(label)
@@ -177,18 +165,27 @@ class Dataset:
         y = np.array(y)
 
         # generate train/validation/test data splits
-        xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=self.test_size, random_state=0)
-        xtrain, xvalid, ytrain, yvalid = train_test_split(xtrain, ytrain, test_size=self.valid_size, random_state=0)
+        tsize = self.params['test_size']
+        vsize = self.params['validation_size']
+        xtrain, xvalid, ytrain, yvalid = train_test_split(x, y, test_size=vsize, random_state=0)
+        xtrain, xtest, ytrain, ytest = train_test_split(xtrain, ytrain, test_size=tsize, random_state=0)
 
-        # rebuild list of target class label directories
+        # oversample training set
+        if self.params['oversample']:
+            ros = RandomOverSampler(random_state=0)
+            xtrain = xtrain.reshape(-1, 1)
+            xtrain, ytrain = ros.fit_resample(xtrain, ytrain)
+            xtrain = xtrain.reshape(-1)
+
+        # rebuild list of class labels
         dirs = [i for i in dirs if i not in others]
         if len(others) > 0:
             dirs.append('OTHR')
 
         # move image splits to their appropriate destination
         self.move_images('train/', dirs, xtrain, ytrain)
+        self.move_images('validation/', dirs, xvalid, yvalid)
         self.move_images('test/', dirs, xtest, ytest)
-        self.move_images('valid/', dirs, xvalid, yvalid)
 
     # purpose: move images from one directory to another
     # inputs:
@@ -204,7 +201,16 @@ class Dataset:
         for i in range(len(x)):
             source = 'data/images/' + x[i].split('_')[0] + '/' + x[i]
             destination = 'data/' + path + y[i] + '/' + x[i]
-            shutil.copyfile(source, destination)
+            # https://stackoverflow.com/questions/33282647/python-shutil-copy-if-i-have-a-duplicate-file-will-it-copy-to-new-location
+            if not os.path.exists(destination):
+                shutil.copyfile(source, destination)
+            else:
+                base, extension = os.path.splitext(x[i])
+                count = 1
+                while os.path.exists(destination):
+                    destination = 'data/' + path + y[i] + '/' + base + '_' + str(count) + extension
+                    count += 1
+                shutil.copyfile(source, destination)
 
     # purpose: initialize new directory
     # input: name of directory to be created
