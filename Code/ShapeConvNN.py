@@ -11,7 +11,7 @@ from keras import optimizers
 
 
 path_dir_train = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/train'
-path_dir_validate = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/valid'
+path_dir_validate = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/validation'
 path_dir_test = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/test'
 
 img_width = 250
