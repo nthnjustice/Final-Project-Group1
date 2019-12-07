@@ -26,7 +26,7 @@ params = {
     # polygon fill color (white = #ffffff, black = #000000)
     'fill': '#000000',
     # boolean value for random oversampling the training set
-    'oversample': True,
+    'oversample': False,
     # minimum number of observations for usable class label
     'min_class_count': 1,
     # validation split size

@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Convolution2D, MaxPooling2D, GlobalAveragePooling2D
+from keras.layers import Convolution2D, MaxPooling2D, GlobalAveragePooling2D, BatchNormalization
 from keras.utils import plot_model
 from keras.callbacks import ModelCheckpoint
 # from IPython.display import SVG
@@ -41,46 +41,45 @@ validation_generator = generator.flow_from_directory(
     class_mode='categorical')
 
 
-# #define model
-model = Sequential()
-model.add(Convolution2D(32, 15, 15, input_shape=(img_width, img_height, 1)))
-model.add(Activation('relu'))
-# model.add(Dropout(0.2))
-model.add(MaxPooling2D(pool_size=(7, 7)))
+base = Sequential()
+base.add(Convolution2D(32, (5, 5), input_shape=(img_width, img_height, 1)))
+# base.add(BatchNormalization())
+base.add(Activation('relu'))
+base.add(MaxPooling2D(pool_size=(3, 3), strides=3))
+base.add(Convolution2D(64, (5, 5)))
+# base.add(BatchNormalization())
+base.add(Activation('relu'))
+# base.add(MaxPooling2D(pool_size=(2, 2)))
+# base.add(Convolution2D(64, (3, 3)))
+# base.add(BatchNormalization())
+# base.add(Activation('relu'))
+# base.add(MaxPooling2D(pool_size=(2, 2)))
+
+GAP = Sequential()
+GAP.add(GlobalAveragePooling2D())
+GAP.add(Flatten())
+GAP.add(Dense(32, activation='relu'))
+GAP.add(Dense(4, activation='softmax'))
+
+GAP_model = Sequential([
+    base,
+    GAP
+])
 
 
-model.add(Convolution2D(64, 3, 3))
-model.add(Activation('relu'))
-# model.add(Dropout(0.5))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
-
-
-# model.add(Dropout(0.2))
-# model.add(GlobalAveragePooling2D())
-model.add(Flatten())
-# model.add(Dense(16))
-model.add(Dense(10))
-model.add(Activation('relu'))
-model.add(Dropout(0.50))
-
-model.add(Dense(4))
-
-model.add(Activation('softmax'))
-Adagrad = optimizers.Adagrad()
-RMSprop = optimizers.RMSprop()
 SGD_decay = optimizers.SGD(lr=learning_rate, decay=decay, momentum=0.8)
 AdamOP = optimizers.adam(lr=0.0001)
-model.summary()
-model.compile(optimizer=SGD_decay,
+GAP_model.summary()
+GAP_model.compile(optimizer=AdamOP,
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-history = model.fit_generator(
+history = GAP_model.fit_generator(
     train_generator,
     # class_weight=class_weights,
     nb_epoch=epochs,
     validation_data=validation_generator,
-    callbacks=[ModelCheckpoint("/home/ubuntu/Deep-Learning/Final-Project-Group1/models/taxa_area_oversampled_prelim.hdf5",
+    callbacks=[ModelCheckpoint("/home/ubuntu/Deep-Learning/Final-Project-Group1/models/taxa_area_GAP.hdf5",
                                monitor="val_loss", save_best_only=True)]
 )
 
