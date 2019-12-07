@@ -7,7 +7,7 @@ from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
 import math
 
-path_train = 'data/train'
+path_train = 'data/mini'
 path_validation = 'data/validation'
 path_test = 'data/test'
 path_output = 'models/outputs/'
