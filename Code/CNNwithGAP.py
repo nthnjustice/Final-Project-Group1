@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Convolution2D, MaxPooling2D, AveragePooling2D, BatchNormalization
+from keras.layers import Convolution2D, MaxPooling2D, AveragePooling2D, BatchNormalization, SpatialDropout2D
 from keras.utils import plot_model
 from keras.callbacks import ModelCheckpoint
 # from IPython.display import SVG
@@ -48,19 +48,17 @@ validation_generator = val_img_generator.flow_from_directory(
 
 
 base = Sequential()
-base.add(Convolution2D(32, (15, 15), input_shape=(img_width, img_height, 1)))
-# base.add(BatchNormalization())
+base.add(Convolution2D(32, (10, 10), input_shape=(img_width, img_height, 1)))
 base.add(Activation('relu'))
-base.add(MaxPooling2D(pool_size=(3, 3)))
+base.add(MaxPooling2D(pool_size=(5, 5)))
 
-base.add(Convolution2D(64, (3, 3)))
-# base.add(BatchNormalization())
+base.add(Convolution2D(64, (5, 5)))
 base.add(Activation('relu'))
-# base.add(MaxPooling2D(pool_size=(2, 2)))
-# base.add(Convolution2D(64, (3, 3)))
-# base.add(BatchNormalization())
-# base.add(Activation('relu'))
-# base.add(MaxPooling2D(pool_size=(2, 2)))
+base.add(MaxPooling2D(pool_size=(2, 2)))
+
+base.add(Convolution2D(128, (3, 3)))
+base.add(Activation('relu'))
+base.add(MaxPooling2D(pool_size=(2, 2)))
 
 GAP = Sequential()
 GAP.add(AveragePooling2D())
