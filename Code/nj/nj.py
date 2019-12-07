@@ -1,8 +1,8 @@
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Convolution2D, Activation, SpatialDropout2D, MaxPooling2D, Flatten, Dense
-from keras.layers import BatchNormalization, AveragePooling2D, Dropout
-from keras.optimizers import Adam
+from keras.layers import AveragePooling2D, Dropout, BatchNormalization
+from keras.optimizers import SGD, Adam
 from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
 import math
@@ -16,8 +16,8 @@ img_width = 100
 img_height = 100
 target_size = (img_width, img_height)
 
-epochs = 10
-batch_size = 32
+epochs = 60
+batch_size = 128
 
 generator = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
 train_generator = generator.flow_from_directory(
@@ -46,32 +46,38 @@ validation_generator = generator.flow_from_directory(
 # )
 
 model = Sequential([
-    Convolution2D(32, kernel_size=(15, 15), strides=1, input_shape=(img_width, img_height, 1)),
+    Convolution2D(32, kernel_size=(10, 10), input_shape=(img_width, img_height, 1)),
+    BatchNormalization(),
     Activation('relu'),
-    #SpatialDropout2D(0.2),
-    #BatchNormalization(),
-    MaxPooling2D(pool_size=3),
-    Convolution2D(64, kernel_size=(5, 5), strides=1),
+    MaxPooling2D(pool_size=(5, 5)),
+    SpatialDropout2D(0.2),
+
+    Convolution2D(64, kernel_size=(5, 5)),
+    BatchNormalization(),
     Activation('relu'),
-    #SpatialDropout2D(0.2),
-    #BatchNormalization(),
-    AveragePooling2D(),
+    MaxPooling2D(pool_size=(2, 2)),
+    SpatialDropout2D(0.2),
+
+    Convolution2D(128, kernel_size=(3, 3)),
+    BatchNormalization(),
+    Activation('relu'),
+    AveragePooling2D(pool_size=(5, 5)),
+    SpatialDropout2D(0.2),
+
     Flatten(),
-    Dense(32),
+    Dense(700),
     Activation('relu'),
-    #Dropout(0.5),
+    Dropout(0.5),
     Dense(9),
     Activation('softmax')
 ])
 
-model.compile(optimizer=Adam(lr=0.01), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 history = model.fit_generator(
     train_generator,
     epochs=epochs,
-    #steps_per_epoch=math.ceil(validation_generator.n / batch_size),
     validation_data=validation_generator,
-    #validation_steps=math.ceil(test_generator.n / batch_size),
     callbacks=[ModelCheckpoint(path_output + 'nj_model.hdf5', monitor="val_loss", save_best_only=True)]
 )
 
