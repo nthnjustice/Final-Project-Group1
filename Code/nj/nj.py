@@ -7,10 +7,10 @@ from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
 import math
 
-path_train = 'data/mini'
-path_validation = 'data/validation'
-path_test = 'data/test'
-path_output = 'models/outputs/'
+path_train = '/home/ubuntu/Final-Project-Group1/Code/data/train'
+path_validation = '/home/ubuntu/Final-Project-Group1/Code/data/validation'
+path_test = '/home/ubuntu/Final-Project-Group1/Code/data/test'
+path_output = '/home/ubuntu/Final-Project-Group1/Code/nj/'
 
 img_width = 100
 img_height = 100
@@ -21,7 +21,7 @@ batch_size = 32
 
 generator = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
 train_generator = generator.flow_from_directory(
-    path_train,
+    path_validation,
     target_size=target_size,
     batch_size=batch_size,
     color_mode='grayscale',
@@ -30,14 +30,6 @@ train_generator = generator.flow_from_directory(
 
 generator = ImageDataGenerator()
 validation_generator = generator.flow_from_directory(
-    path_validation,
-    target_size=target_size,
-    batch_size=batch_size,
-    color_mode='grayscale',
-    class_mode='categorical'
-)
-
-test_generator = generator.flow_from_directory(
     path_test,
     target_size=target_size,
     batch_size=batch_size,
@@ -45,34 +37,42 @@ test_generator = generator.flow_from_directory(
     class_mode='categorical'
 )
 
+# test_generator = generator.flow_from_directory(
+#     path_test,
+#     target_size=target_size,
+#     batch_size=batch_size,
+#     color_mode='grayscale',
+#     class_mode='categorical'
+# )
+
 model = Sequential([
-    Convolution2D(32, kernel_size=(3, 3), strides=1, input_shape=(img_width, img_height, 1)),
+    Convolution2D(32, kernel_size=(15, 15), strides=1, input_shape=(img_width, img_height, 1)),
     Activation('relu'),
-    SpatialDropout2D(0.2),
-    BatchNormalization(),
-    MaxPooling2D(pool_size=2),
-    Convolution2D(64, kernel_size=(3, 3), strides=1),
+    #SpatialDropout2D(0.2),
+    #BatchNormalization(),
+    MaxPooling2D(pool_size=3),
+    Convolution2D(64, kernel_size=(5, 5), strides=1),
     Activation('relu'),
-    SpatialDropout2D(0.2),
-    BatchNormalization(),
-    AveragePooling2D(pool_size=2),
+    #SpatialDropout2D(0.2),
+    #BatchNormalization(),
+    AveragePooling2D(),
     Flatten(),
-    Dense(400),
+    Dense(32),
     Activation('relu'),
-    Dropout(0.5),
+    #Dropout(0.5),
     Dense(9),
     Activation('softmax')
 ])
 
-model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=Adam(lr=0.01), loss='categorical_crossentropy', metrics=['accuracy'])
 
 history = model.fit_generator(
     train_generator,
     epochs=epochs,
-    steps_per_epoch=math.ceil(train_generator.n / batch_size),
+    #steps_per_epoch=math.ceil(validation_generator.n / batch_size),
     validation_data=validation_generator,
-    validation_steps=math.ceil(validation_generator.n / batch_size),
-    callbacks=[ModelCheckpoint(path_output + 'nj.hdf5', monitor="val_loss", save_best_only=True)]
+    #validation_steps=math.ceil(test_generator.n / batch_size),
+    callbacks=[ModelCheckpoint(path_output + 'nj_model.hdf5', monitor="val_loss", save_best_only=True)]
 )
 
 plt.plot(history.history['acc'])
@@ -81,6 +81,7 @@ plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
+plt.savefig(path_output + 'nj_acc.png')
 plt.show()
 
 plt.plot(history.history['loss'])
@@ -89,4 +90,5 @@ plt.title('Model loss')
 plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
+plt.savefig(path_output + 'nj_loss.png')
 plt.show()
