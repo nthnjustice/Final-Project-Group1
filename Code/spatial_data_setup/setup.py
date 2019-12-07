@@ -1,6 +1,3 @@
-import os
-os.chdir('/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/')
-
 from utils.get_datainfo import get_datainfo
 from utils.init_dir import init_dir
 from spatial_data_setup.fetch_data import fetch_data
@@ -16,7 +13,7 @@ img_fill = '#000000'
 min_obsv = 1
 valid_size = 0.2
 test_size = 0.1
-oversample = True
+oversample = False
 
 init_dir('data')
 init_dir('data/spatial')
