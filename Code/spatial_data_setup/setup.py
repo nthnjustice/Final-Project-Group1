@@ -5,9 +5,7 @@ from spatial_data_setup.sp_2_png import sp_2_png
 from spatial_data_setup.split_data import split_data
 
 data_source = 'buildings'
-target = None
-img_dim = 90
-img_pad = 10
+img_dim = 100
 img_mode = '1'
 img_fill = '#000000'
 min_obsv = 1
@@ -23,7 +21,7 @@ fetch_data(name, url, 'data/spatial')
 
 init_dir('data/images')
 print('converting shapes into images...')
-sp_2_png(img_dim, img_pad, img_mode, img_fill, target)
+sp_2_png(img_dim, img_mode, img_fill)
 
 init_dir('data/train')
 init_dir('data/validation')
