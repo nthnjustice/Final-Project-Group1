@@ -1,7 +1,7 @@
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Convolution2D, Activation, SpatialDropout2D, MaxPooling2D, Flatten, Dense
-from keras.layers import AveragePooling2D, Dropout, BatchNormalization
+from keras.layers import AveragePooling2D, Dropout, BatchNormalization, GlobalAveragePooling2D
 from keras.optimizers import SGD, Adam
 from keras.callbacks import ModelCheckpoint
 import matplotlib.pyplot as plt
@@ -16,7 +16,7 @@ img_width = 100
 img_height = 100
 target_size = (img_width, img_height)
 
-epochs = 150
+epochs = 60
 batch_size = 32
 
 generator = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
@@ -47,21 +47,24 @@ test_generator = generator.flow_from_directory(
 
 model = Sequential([
     Convolution2D(16, kernel_size=(5, 5), input_shape=(img_width, img_height, 1)),
+    Convolution2D(16, kernel_size=(5, 5), input_shape=(img_width, img_height, 1)),
     BatchNormalization(),
     Activation('relu'),
     MaxPooling2D(pool_size=(5, 5)),
     SpatialDropout2D(0.2),
 
     Convolution2D(32, kernel_size=(5, 5)),
+    Convolution2D(32, kernel_size=(5, 5)),
     BatchNormalization(),
     Activation('relu'),
-    # MaxPooling2D(pool_size=(2, 2)),
-    # SpatialDropout2D(0.2),
+    MaxPooling2D(pool_size=(2, 2)),
+    SpatialDropout2D(0.2),
 
-    # Convolution2D(128, kernel_size=(3, 3)),
-    # BatchNormalization(),
-    # Activation('relu'),
-    AveragePooling2D(pool_size=(5, 5)),
+    Convolution2D(128, kernel_size=(3, 3)),
+    Convolution2D(128, kernel_size=(3, 3)),
+    BatchNormalization(),
+    Activation('relu'),
+    AveragePooling2D(pool_size=(1, 1)),
     SpatialDropout2D(0.2),
 
     Flatten(),
@@ -78,7 +81,7 @@ history = model.fit_generator(
     train_generator,
     epochs=epochs,
     validation_data=validation_generator,
-    callbacks=[ModelCheckpoint(path_output + 'nj_model.hdf5', monitor="val_loss", save_best_only=True)]
+    callbacks=[ModelCheckpoint(path_output + 'nj_model.hdf5', monitor="val_loss")]
 )
 
 plt.plot(history.history['acc'])
