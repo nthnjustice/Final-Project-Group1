@@ -16,12 +16,12 @@ img_width = 100
 img_height = 100
 target_size = (img_width, img_height)
 
-epochs = 60
+epochs = 150
 batch_size = 32
 
 generator = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
 train_generator = generator.flow_from_directory(
-    path_validation,
+    path_train,
     target_size=target_size,
     batch_size=batch_size,
     color_mode='grayscale',
@@ -30,20 +30,20 @@ train_generator = generator.flow_from_directory(
 
 generator = ImageDataGenerator()
 validation_generator = generator.flow_from_directory(
-    path_test,
+    path_validation,
     target_size=target_size,
     batch_size=batch_size,
     color_mode='grayscale',
     class_mode='categorical'
 )
 
-# test_generator = generator.flow_from_directory(
-#     path_test,
-#     target_size=target_size,
-#     batch_size=batch_size,
-#     color_mode='grayscale',
-#     class_mode='categorical'
-# )
+test_generator = generator.flow_from_directory(
+    path_test,
+    target_size=target_size,
+    batch_size=batch_size,
+    color_mode='grayscale',
+    class_mode='categorical'
+)
 
 model = Sequential([
     Convolution2D(16, kernel_size=(5, 5), input_shape=(img_width, img_height, 1)),
