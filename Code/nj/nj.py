@@ -17,7 +17,7 @@ img_height = 100
 target_size = (img_width, img_height)
 
 epochs = 60
-batch_size = 128
+batch_size = 32
 
 generator = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
 train_generator = generator.flow_from_directory(
@@ -46,21 +46,21 @@ validation_generator = generator.flow_from_directory(
 # )
 
 model = Sequential([
-    Convolution2D(32, kernel_size=(10, 10), input_shape=(img_width, img_height, 1)),
+    Convolution2D(16, kernel_size=(5, 5), input_shape=(img_width, img_height, 1)),
     BatchNormalization(),
     Activation('relu'),
     MaxPooling2D(pool_size=(5, 5)),
     SpatialDropout2D(0.2),
 
-    Convolution2D(64, kernel_size=(5, 5)),
+    Convolution2D(32, kernel_size=(5, 5)),
     BatchNormalization(),
     Activation('relu'),
-    MaxPooling2D(pool_size=(2, 2)),
-    SpatialDropout2D(0.2),
+    # MaxPooling2D(pool_size=(2, 2)),
+    # SpatialDropout2D(0.2),
 
-    Convolution2D(128, kernel_size=(3, 3)),
-    BatchNormalization(),
-    Activation('relu'),
+    # Convolution2D(128, kernel_size=(3, 3)),
+    # BatchNormalization(),
+    # Activation('relu'),
     AveragePooling2D(pool_size=(5, 5)),
     SpatialDropout2D(0.2),
 
