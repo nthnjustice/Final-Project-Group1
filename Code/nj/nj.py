@@ -53,38 +53,38 @@ test_generator = generator.flow_from_directory(
 )
 
 model = Sequential([
-    Convolution2D(16, kernel_size=(5, 5), strides=(1, 1), padding='same', input_shape=(img_width, img_height, 1)),
-    BatchNormalization(),
-    Activation('relu'),
-    MaxPooling2D(pool_size=(5, 5)),
-    SpatialDropout2D(0.2),
-
-    Convolution2D(32, kernel_size=(5, 5), strides=(1, 1), padding='same'),
-    BatchNormalization(),
-    Activation('relu'),
-    AveragePooling2D(pool_size=(5, 5)),
-    SpatialDropout2D(0.2),
-
-    Flatten(),
-    Dense(700),
-    Activation('relu'),
-    Dropout(0.5),
-    Dense(2),
-    Activation('softmax')
+    # Convolution2D(16, kernel_size=(5, 5), strides=(1, 1), padding='same', input_shape=(img_width, img_height, 1)),
+    # BatchNormalization(),
+    # Activation('relu'),
+    # MaxPooling2D(pool_size=(5, 5)),
+    # SpatialDropout2D(0.2),
+    #
+    # Convolution2D(32, kernel_size=(5, 5), strides=(1, 1), padding='same'),
+    # BatchNormalization(),
+    # Activation('relu'),
+    # AveragePooling2D(pool_size=(5, 5)),
+    # SpatialDropout2D(0.2),
+    #
+    # Flatten(),
+    # Dense(700),
+    # Activation('relu'),
+    # Dropout(0.5),
+    # Dense(2),
+    # Activation('softmax')
 
     ###
 
-    # Convolution2D(32, kernel_size=(5, 5), padding='same', input_shape=(img_width, img_height, 1)),
-    # Activation('relu'),
-    # MaxPooling2D(pool_size=(3, 3), padding='same'),
-    # Convolution2D(65, kernel_size=(5, 5), padding='same'),
-    # Activation('relu'),
-    # GlobalAveragePooling2D(),
-    # Dense(32),
-    # Activation('relu'),
-    # Dropout(0),
-    # Dense(2),
-    # Activation('softmax')
+    Convolution2D(32, kernel_size=(5, 5), padding='same', input_shape=(img_width, img_height, 1)),
+    Activation('relu'),
+    MaxPooling2D(pool_size=(3, 3), padding='same'),
+    Convolution2D(65, kernel_size=(5, 5), padding='same'),
+    Activation('relu'),
+    GlobalAveragePooling2D(),
+    Dense(32),
+    Activation('relu'),
+    Dropout(0),
+    Dense(2),
+    Activation('softmax')
 ])
 
 model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['acc'])

@@ -4,7 +4,7 @@ from spatial_data_setup.fetch_data import fetch_data
 from spatial_data_setup.sp_2_png import sp_2_png
 from spatial_data_setup.split_data import split_data
 
-data_source = 'neighborhoods'
+# data_source = 'neighborhoods'
 img_dim = 100
 img_mode = '1'
 img_fill = '#000000'
