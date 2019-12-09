@@ -1,15 +1,5 @@
 from keras.models import Sequential, load_model
-from keras.layers import Activation, Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Convolution2D, MaxPooling2D, GlobalAveragePooling2D
-from keras.utils import plot_model, to_categorical
-from keras.callbacks import ModelCheckpoint
-# from IPython.display import SVG
-from keras.utils import model_to_dot
-import matplotlib.pyplot as plt
-from keras import optimizers
-from imblearn.keras import balanced_batch_generator
-from sklearn.utils import class_weight
 import numpy as np
 import glob
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
