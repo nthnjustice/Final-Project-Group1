@@ -78,7 +78,7 @@ model = Sequential([
 ])
 
 model.compile(optimizer=AdamOP, loss='categorical_crossentropy', metrics=['accuracy'])
-
+model.summary()
 history = model.fit_generator(
     train_generator,
     epochs=epochs,
