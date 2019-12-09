@@ -4,14 +4,14 @@ from spatial_data_setup.fetch_data import fetch_data
 from spatial_data_setup.sp_2_png import sp_2_png
 from spatial_data_setup.split_data import split_data
 
-data_source = 'buildings'
+data_source = 'neighborhoods'
 img_dim = 100
 img_mode = '1'
 img_fill = '#000000'
 min_obsv = 1
 valid_size = 0.2
 test_size = 0.1
-oversample = False
+oversample = True
 
 init_dir('data')
 init_dir('data/spatial')
