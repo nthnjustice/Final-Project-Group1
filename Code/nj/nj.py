@@ -20,7 +20,7 @@ img_width = 100
 img_height = 100
 target_size = (img_width, img_height)
 
-epochs = 60
+epochs = 200
 batch_size = 32
 
 generator = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
@@ -87,7 +87,7 @@ model = Sequential([
     Activation('softmax')
 ])
 
-model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['acc'])
+model.compile(optimizer=Adam(lr=0.0001), loss='categorical_crossentropy', metrics=['acc'])
 
 history = model.fit_generator(
     train_generator,
