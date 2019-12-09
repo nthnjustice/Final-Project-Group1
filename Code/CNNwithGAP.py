@@ -23,7 +23,7 @@ path_dir_validate = '/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/data/t
 
 img_width = 100
 img_height = 100
-epochs = 60
+epochs = 150
 learning_rate = 0.01
 decay = 1e-6
 batch_size = 128
@@ -73,9 +73,9 @@ GAP_model = Sequential([
 
 
 SGD_decay = optimizers.SGD(lr=0.01, decay=decay, momentum=0.9)
-Adam = optimizers.adam(lr=0.001)
+AdamOP = optimizers.adam(lr=0.001)
 GAP_model.summary()
-GAP_model.compile(optimizer=Adam,
+GAP_model.compile(optimizer=AdamOP,
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
@@ -84,7 +84,7 @@ history = GAP_model.fit_generator(
     # class_weight=class_weights,
     nb_epoch=epochs,
     validation_data=validation_generator,
-    callbacks=[ModelCheckpoint("/home/ubuntu/Deep-Learning/Final-Project-Group1/models/taxa_area_GAP_adam.hdf5",
+    callbacks=[ModelCheckpoint("/home/ubuntu/Deep-Learning/Final-Project-Group1/models/bldg_area_GAP_adam.hdf5",
                                monitor="val_loss", save_best_only=True)]
 )
 
@@ -95,7 +95,7 @@ plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
-plt.savefig('acc_taxa_area_GAP_adam.png')
+plt.savefig('acc_bldg_area_GAP_adam.png')
 plt.show()
 
 # Plot training & validation loss values
@@ -106,5 +106,5 @@ plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend(['Train', 'Test'], loc='upper left')
 
-plt.savefig('val_taxa_area_GAP_adam.png')
+plt.savefig('val_bldg_area_GAP_adam.png')
 plt.show()
