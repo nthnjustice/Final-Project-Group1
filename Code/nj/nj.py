@@ -53,13 +53,13 @@ test_generator = generator.flow_from_directory(
 )
 
 model = Sequential([
-    Convolution2D(32, kernel_size=(5, 5), input_shape=(img_width, img_height, 1)),
+    Convolution2D(8, kernel_size=(25, 25), strides=(1, 1), padding='same', input_shape=(img_width, img_height, 1)),
     BatchNormalization(),
     Activation('relu'),
     MaxPooling2D(pool_size=(5, 5)),
     SpatialDropout2D(0.2),
 
-    Convolution2D(64, kernel_size=(5, 5)),
+    Convolution2D(16, kernel_size=(10, 10), strides=(2, 2), padding='same'),
     BatchNormalization(),
     Activation('relu'),
     AveragePooling2D(pool_size=(5, 5)),
@@ -69,7 +69,7 @@ model = Sequential([
     Dense(700),
     Activation('relu'),
     Dropout(0.5),
-    Dense(11),
+    Dense(2),
     Activation('softmax')
 ])
 
