@@ -22,10 +22,8 @@ test_generator = generator.flow_from_directory(
 )
 
 model = load_model(path_dir_models + '/nj_model.hdf5')
-# model = load_model("/home/ubuntu/Deep-Learning/Final-Project-Group1/Code/dv_model_adam.hdf5")
 steps = test_generator.n//test_generator.batch_size
 test_generator.reset()
-# pred = model.predict_generator(test_generator, steps=STEP_SIZE_TEST, verbose=1)
 loss, acc = model.evaluate_generator(test_generator, steps=steps, verbose=0)
 print("loss: ", loss)
 print("acc: ", acc)
