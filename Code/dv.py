@@ -16,11 +16,11 @@ img_width = 100
 img_height = 100
 target_size = (img_width, img_height)
 
-epochs = 60
+epochs = 150
 batch_size = 224
 learning_rate = 0.1
 decay = 1e-6
-AdamOP = Adam(lr=0.001)
+AdamOP = Adam(lr=0.0005)
 SGD_decay = SGD(lr=learning_rate, decay=decay, momentum=0.9)
 
 generator = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
@@ -29,6 +29,7 @@ train_generator = generator.flow_from_directory(
     target_size=target_size,
     batch_size=batch_size,
     color_mode='grayscale',
+    shuffle=True,
     class_mode='categorical'
 )
 
@@ -77,7 +78,7 @@ model = Sequential([
 ])
 
 model.compile(optimizer=AdamOP, loss='categorical_crossentropy', metrics=['accuracy'])
-
+model.summary()
 history = model.fit_generator(
     train_generator,
     epochs=epochs,
