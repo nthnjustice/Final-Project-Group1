@@ -25,13 +25,11 @@ model = load_model(path_dir_models + '/nj_model.hdf5')
 steps = test_generator.n//test_generator.batch_size
 test_generator.reset()
 loss, acc = model.evaluate_generator(test_generator, steps=steps, verbose=0)
+print("accuracy: ", acc)
 print("loss: ", loss)
-print("acc: ", acc)
 
-Y_pred = model.predict_generator(test_generator, steps+1)
-y_pred = np.argmax(Y_pred, axis=1)
-print('Confusion Matrix')
-print(confusion_matrix(test_generator.classes, y_pred))
-print('Classification Report')
-print(classification_report(test_generator.classes, y_pred))
+pred = model.predict_generator(test_generator, steps+1)
+prediction = np.argmax(pred, axis=1)
+print('FINAL TESTING REPORT')
+print(classification_report(test_generator.classes, pred))
 
