@@ -42,13 +42,6 @@ validation_generator = generator.flow_from_directory(
     class_mode='categorical'
 )
 
-# test_generator = generator.flow_from_directory(
-#     path_test,
-#     target_size=target_size,
-#     batch_size=batch_size,
-#     color_mode='grayscale',
-#     class_mode='categorical'
-# )
 
 model = Sequential([
     Convolution2D(16, kernel_size=(5, 5), input_shape=(img_width, img_height, 1)),
@@ -60,12 +53,7 @@ model = Sequential([
     Convolution2D(32, kernel_size=(5, 5)),
     BatchNormalization(),
     Activation('relu'),
-    # MaxPooling2D(pool_size=(2, 2)),
-    # SpatialDropout2D(0.2),
 
-    # Convolution2D(128, kernel_size=(3, 3)),
-    # BatchNormalization(),
-    # Activation('relu'),
     AveragePooling2D(pool_size=(5, 5)),
     SpatialDropout2D(0.2),
 
@@ -73,7 +61,7 @@ model = Sequential([
     Dense(700),
     Activation('relu'),
     Dropout(0.5),
-    Dense(8),
+    Dense(9),
     Activation('softmax')
 ])
 
