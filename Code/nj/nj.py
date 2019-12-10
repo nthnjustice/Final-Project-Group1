@@ -20,8 +20,8 @@ img_width = 100
 img_height = 100
 target_size = (img_width, img_height)
 
-epochs = 500
-batch_size = 16
+epochs = 1000
+batch_size = 32
 
 generator = ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
 train_generator = generator.flow_from_directory(
@@ -92,7 +92,7 @@ model = Sequential([
     # Activation('softmax')
 ])
 
-model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossentropy', metrics=['acc'])
+model.compile(optimizer=SGD(lr=0.01, decay=1e-6, momentum=0.9), loss='categorical_crossentropy', metrics=['acc'])
 
 history = model.fit_generator(
     train_generator,
@@ -119,7 +119,7 @@ plt.legend(['Train', 'Test'], loc='upper left')
 plt.savefig(path_output + 'nj_loss.png')
 plt.show()
 
-model = load_model(path_output + 'nj_model.hdf5')
+model = load_model(path_output + '/2d-neighborhoods/m4/nj_model.hdf5')
 steps = test_generator.n // test_generator.batch_size
 test_generator.reset()
 loss, acc = model.evaluate_generator(test_generator, steps=steps, verbose=0)

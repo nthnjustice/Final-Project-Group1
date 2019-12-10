@@ -1,0 +1,4 @@
+black-fill
+2 convolution layers
+60 epochs
+32 batch size
