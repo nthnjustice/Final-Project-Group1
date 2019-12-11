@@ -1,3 +1,5 @@
+# helper to download data from remote location
+
 import os
 from urllib import request
 import zipfile

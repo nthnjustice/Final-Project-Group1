@@ -1,3 +1,5 @@
+# helper that splits image data into train/validation/test splits
+
 import os
 import numpy as np
 from sklearn.model_selection import train_test_split

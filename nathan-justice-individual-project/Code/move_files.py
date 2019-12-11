@@ -1,3 +1,5 @@
+# helper function to move files from one directory to another (handles duplicate names without overwriting)
+
 import os
 import shutil
 

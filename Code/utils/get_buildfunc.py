@@ -1,3 +1,6 @@
+# crosswalk for buildings dataset - maps building type labels from Dutch to English
+
+
 # https://github.com/SPINLab/geometry-learning/blob/develop/prep/preprocess-buildings.py
 def get_buildfunc(building):
     if building == 'bijeenkomstfunctie':

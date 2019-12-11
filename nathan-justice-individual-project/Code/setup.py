@@ -1,3 +1,5 @@
+# manages all data-related components of the project - must be run before CNN models can be used
+
 from utils.get_datainfo import get_datainfo
 from utils.init_dir import init_dir
 from spatial_data_setup.fetch_data import fetch_data
@@ -6,6 +8,7 @@ from spatial_data_setup.split_data import split_data
 
 
 def setup():
+    # define project environment variables
     data_source = 'buildings'
     print('using ' + data_source + ' as the data source for modeling')
     img_dim = 100
@@ -16,6 +19,7 @@ def setup():
     test_size = 0.1
     oversample = True
 
+    # call helper functions to render and populate the project architecture
     init_dir('data')
     init_dir('data/spatial')
     name, url = get_datainfo(data_source)

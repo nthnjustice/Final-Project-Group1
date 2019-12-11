@@ -1,3 +1,6 @@
+# helper for handling names and locations of the various datasets used during project development
+
+
 def get_datainfo(source):
     if source == 'buildings':
         return 'buildings', 'https://github.com/SPINLab/geometry-learning/raw/develop/files/buildings/buildings.csv.zip'

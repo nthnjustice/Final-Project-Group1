@@ -1,3 +1,5 @@
+# helper function to create new directory or delete contents if it already exists
+
 import os
 import shutil
 

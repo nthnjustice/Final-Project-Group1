@@ -1,3 +1,5 @@
+# code for Nathan's custom CNN implementation (re-used for every model iteration, see GitHub logs for previous versions)
+
 import math
 import numpy as np
 import matplotlib.pyplot as plt
